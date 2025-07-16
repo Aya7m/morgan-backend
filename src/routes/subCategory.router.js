@@ -1,0 +1,16 @@
+import { Router } from "express";
+import { multerLocalhost } from "../middleware/multer.meddleware.js";
+import { createSubCategory, deleteSubCategory, getSubCategory, updateSubCategory } from "../controllers/subCategory.controller.js";
+import { extention } from "../utilites/fileExtention.utilites.js";
+
+const subCategoryRouter = Router();
+
+subCategoryRouter.post('/create',
+    multerLocalhost({ allowedExtensions: extention.Images }).single('image'),
+    createSubCategory);
+
+subCategoryRouter.get('/', getSubCategory);
+subCategoryRouter.put('/:id', multerLocalhost({ allowedExtensions: extention.Images }).single('image'), updateSubCategory);
+subCategoryRouter.delete('/:id', multerLocalhost({ allowedExtensions: extention.Images }).single('image'), deleteSubCategory);
+
+export default subCategoryRouter;
