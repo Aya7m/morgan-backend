@@ -82,8 +82,7 @@ export const createProduct = async (req, res) => {
 
         }
 
-        // إنشاء المنتج
-        const newProduct = await Product.create({
+        let newProduct = await Product.create({
             title,
             slug,
             description,
@@ -91,14 +90,25 @@ export const createProduct = async (req, res) => {
             badges,
             category,
             subCategory,
-            createdBy: req.authuser._id, // استخدام المستخدم الذي قام بتسجيل الدخول
+            createdBy: req.authuser._id,
             variants: parsedVariants
         });
+
+        // Populate category & subCategory names
+        newProduct = await newProduct
+            .populate("category", "name slug")
+            .populate("subCategory", "name slug")
+            .execPopulate?.(); // For older Mongoose versions
+        // OR if execPopulate throws error (Mongoose v6+), use this:
+        newProduct = await Product.findById(newProduct._id)
+            .populate("category", "name slug")
+            .populate("subCategory", "name slug");
 
         return res.status(201).json({
             message: "Product created successfully",
             data: newProduct
         });
+
 
     } catch (error) {
         console.error("Error creating product:", error);
