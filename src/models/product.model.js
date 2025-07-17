@@ -82,7 +82,15 @@ const productSchema = new Schema({
                 }
             ]
         }
-    ]
+    ],
+
+    price: Number,
+    stock: Number,
+    discount: {
+        amount: Number,
+        type: { type: String, enum: ["percent", "fixed"] }
+    }
+
 
 }, {
     timestamps: true,

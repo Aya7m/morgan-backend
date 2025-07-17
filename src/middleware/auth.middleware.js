@@ -32,3 +32,12 @@ export const auth = () => {
     }
   };
 };
+
+export const authRole = (admin) => {
+  return (req, res, next) => {
+    if (!req.authuser || req.authuser.role !== admin) {
+      return res.status(403).json({ error: "Forbidden, you do not have permission to access this resource" });
+    }
+    next();
+  };
+};

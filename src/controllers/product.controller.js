@@ -33,11 +33,20 @@ export const createProduct = async (req, res) => {
 
         for (let i = 0; i < parsedVariantList.length; i++) {
             const variant = parsedVariantList[i];
-            const { color, sizes } = variant;
 
-            if (!color || !sizes || sizes.length === 0) {
-                return res.status(400).json({ message: `Missing color or sizes in variant ${i + 1}` });
+            const { color, sizes, price, stock, discount } = variant;
+
+            if (!color) {
+                return res.status(400).json({ message: `Missing color in variant ${i + 1}` });
             }
+
+            const hasSizes = sizes && sizes.length > 0;
+            const hasSimplePricing = price != null && stock != null;
+
+            if (!hasSizes && !hasSimplePricing) {
+                return res.status(400).json({ message: `Variant ${i + 1} must have sizes or price & stock` });
+            }
+
 
             // الصور المتعددة لكل لون
             const imageFiles = req.files?.[`variantImages_${i}`];
@@ -65,8 +74,12 @@ export const createProduct = async (req, res) => {
             parsedVariants.push({
                 color,
                 images: variantImages,
-                sizes // هتكون عبارة عن مصفوفة من: { size, price, stock }
+                ...(hasSizes
+                    ? { sizes }  // مثال: [{ size: 'M', price: 100, stock: 5 }]
+                    : { sizes: [{ size: null, price, stock, discount }] } // لو إكسسوار بدون size
+                )
             });
+
         }
 
         // إنشاء المنتج
@@ -78,7 +91,7 @@ export const createProduct = async (req, res) => {
             badges,
             category,
             subCategory,
-            createdBy,
+            createdBy: req.authuser._id, // استخدام المستخدم الذي قام بتسجيل الدخول
             variants: parsedVariants
         });
 
