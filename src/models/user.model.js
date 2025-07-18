@@ -36,6 +36,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    address: [{
+        type: Schema.Types.ObjectId,
+        ref: "Address"
+    }],
     resetPasswordToken: String,
     resetPasswordExpires: Date
 }, {

@@ -50,6 +50,9 @@ export const signUp = async (req, res) => {
         await newUser.save();
 
         await address.save();
+
+        newUser.address.push(address._id);
+        await newUser.save(); // نحفظ التعديل
         res.status(201).json({ message: "User created successfully", data: newUser, address });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
@@ -217,10 +220,14 @@ export const loginUser = async (req, res) => {
 // get me
 export const getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.authuser._id).select("-password");
+        const user = await User.findById(req.authuser._id)
+            .select("-password")
+            .populate("address"); // ✅ populate address مباشرة
+
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+
         res.status(200).json({ message: "User fetched successfully", data: user });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
