@@ -24,8 +24,7 @@ export const signUp = async (req, res) => {
         // hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user
-        const newUser = new User({
+        const newUser = await User.create({
             name,
             email,
             password: hashedPassword,
@@ -33,9 +32,7 @@ export const signUp = async (req, res) => {
             role
         });
 
-        // create address object
-
-        const address = new Address({
+        const newAddress = await Address.create({
             userId: newUser._id,
             country,
             city,
@@ -45,15 +42,15 @@ export const signUp = async (req, res) => {
             isDefault: true
         });
 
-
-
+        newUser.address.push(newAddress._id);
         await newUser.save();
 
-        await address.save();
+        res.status(201).json({
+            message: "User created successfully",
+            data: newUser,
+            address: newAddress
+        });
 
-        newUser.address.push(address._id);
-        await newUser.save(); // نحفظ التعديل
-        res.status(201).json({ message: "User created successfully", data: newUser, address });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }
