@@ -40,6 +40,7 @@ export const createCategory = async (req, res) => {
                 },
             ],
             customId,
+            createBy: req.authuser._id, // Assuming req.authuser is set by auth middleware
         };
 
         const newCategory = await Category.create(category);

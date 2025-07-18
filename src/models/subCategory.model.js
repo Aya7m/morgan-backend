@@ -17,7 +17,6 @@ const subCategorySchema = new Schema({
     createBy: {
         type: Schema.Types.ObjectId,
         ref: "User",
-       
         required: true,
     },
     images: [

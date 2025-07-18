@@ -37,15 +37,23 @@ export const createSubCategory = async (req, res) => {
             folder: `${process.env.UPLOADS_FOLDER}/categories/${category.customId}/subCategories/${customId}`,
 
         });
+
+        // create subCategory object
         const subCategory = {
             name,
             slug,
             customId,
             images: { public_id, secure_url },
-            categoryId: category._id
+            categoryId: category,
+            createBy: req.authuser._id, // Assuming req.authuser is set by auth middleware
 
         };
-        const newSubCategory = await SubCategory.create(subCategory);
+        let newSubCategory = await SubCategory.create(subCategory);
+
+        // Populate categoryId to return its name/slug/customId
+        newSubCategory = await SubCategory.findById(newSubCategory._id)
+            .populate("categoryId", "name slug customId");
+
         res.status(200).json({ message: "SubCategory created successfully", data: newSubCategory });
 
 

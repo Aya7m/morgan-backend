@@ -95,11 +95,11 @@ export const createProduct = async (req, res) => {
         });
 
         // Populate category & subCategory names
-        newProduct = await newProduct
-            .populate("category", "name slug")
-            .populate("subCategory", "name slug")
-            .execPopulate?.(); // For older Mongoose versions
-        // OR if execPopulate throws error (Mongoose v6+), use this:
+        // newProduct = await newProduct
+        //     .populate("category", "name slug")
+        //     .populate("subCategory", "name slug")
+        //     .execPopulate?.(); // For older Mongoose versions
+        // // OR if execPopulate throws error (Mongoose v6+), use this:
         newProduct = await Product.findById(newProduct._id)
             .populate("category", "name slug")
             .populate("subCategory", "name slug");
