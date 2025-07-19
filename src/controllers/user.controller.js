@@ -10,49 +10,29 @@ dotenv.config();
 
 export const signUp = async (req, res) => {
     try {
-        const { name, email, password, phone, role, city, country, buildingNumber, floorNumber, postalCode } = req.body;
-        if (!name || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
+        const { name, email, password, phone, country, city, buildingNumber, floorNumber, postalCode } = req.body;
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
-        }
+        if (existingUser) return res.status(400).json({ message: "Email already exists" });
 
-        // hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({ name, email, password, phone });
 
-        const newUser = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            phone,
-            role
-        });
-
-        const newAddress = await Address.create({
-            userId: newUser._id,
+        const address = await Address.create({
+            user: user._id,
             country,
             city,
-            postalCode,
             buildingNumber,
             floorNumber,
-            isDefault: true
+            postalCode
         });
 
-        newUser.address.push(newAddress._id);
-        await newUser.save();
+        user.address.push(address._id);
+        await user.save();
 
-        res.status(201).json({
-            message: "User created successfully",
-            data: newUser,
-            address: newAddress
-        });
-
+        res.status(201).json({ user, address });
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        console.error(error);
+        res.status(500).json({ message: "Registration failed" });
     }
 }
 
