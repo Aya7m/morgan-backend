@@ -4,32 +4,27 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { Address } from "../models/address.model.js";
+
 
 dotenv.config();
 
 export const signUp = async (req, res) => {
     try {
-        const { name, email, password, phone, country, city, buildingNumber, floorNumber, postalCode } = req.body;
-
+        const { name, email, phone, password } = req.body;
         const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "Email already exists" });
-
-        const user = await User.create({ name, email, password, phone });
-
-        const address = await Address.create({
-            user: user._id,
-            country,
-            city,
-            buildingNumber,
-            floorNumber,
-            postalCode
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+        const user = new User({
+            name,
+            email,
+            phone,
+            password,
         });
-
-        user.address.push(address._id);
-        await user.save();
-
-        res.status(201).json({ user, address });
+        // hash password
+        user.password = await bcrypt.hash(password, 10);
+        const savedUser = await user.save();
+        res.status(201).json({ message: "Registration successful", data: savedUser });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Registration failed" });
@@ -199,7 +194,7 @@ export const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.authuser._id)
             .select("-password")
-            .populate("address"); // ✅ populate address مباشرة
+            .lean();
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
