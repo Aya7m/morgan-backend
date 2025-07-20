@@ -49,6 +49,8 @@ export const createSubCategory = async (req, res) => {
 
         };
         let newSubCategory = await SubCategory.create(subCategory);
+        category.subCategories.push(newSubCategory._id);
+        await category.save();
 
         // Populate categoryId to return its name/slug/customId
         newSubCategory = await SubCategory.findById(newSubCategory._id)

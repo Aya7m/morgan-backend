@@ -16,7 +16,7 @@ const categorySchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
-        
+
     },
     images: [
         {
@@ -35,6 +35,12 @@ const categorySchema = new Schema({
         unique: true,
         required: false,
     },
+    subCategories: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "SubCategory",
+        },
+    ],
 }, {
     timestamps: true,
 });
