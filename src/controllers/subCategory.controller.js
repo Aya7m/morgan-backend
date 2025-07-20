@@ -168,3 +168,22 @@ export const deleteSubCategory = async (req, res) => {
     }
 };
 
+
+// get all subCategory in a category
+export const getSubCategoriesByCategory = async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+        if (!categoryId) {
+            return res.status(400).json({ message: "Category ID is required" });
+        }
+
+        const subCategories = await SubCategory.find({ categoryId }).populate("categoryId", "name slug customId");
+        res.status(200).json({
+            message: "SubCategories fetched successfully",
+            data: subCategories,
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+}

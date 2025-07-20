@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { multerLocalhost } from "../middleware/multer.meddleware.js";
-import { createSubCategory, deleteSubCategory, getSubCategory, updateSubCategory } from "../controllers/subCategory.controller.js";
+import { createSubCategory, deleteSubCategory, getSubCategoriesByCategory, getSubCategory, updateSubCategory } from "../controllers/subCategory.controller.js";
 import { extention } from "../utilites/fileExtention.utilites.js";
 import { auth } from "../middleware/auth.middleware.js";
 
@@ -13,5 +13,5 @@ subCategoryRouter.post('/create',auth(),
 subCategoryRouter.get('/', getSubCategory);
 subCategoryRouter.put('/:id',auth(), multerLocalhost({ allowedExtensions: extention.Images }).single('image'), updateSubCategory);
 subCategoryRouter.delete('/:id',auth(), multerLocalhost({ allowedExtensions: extention.Images }).single('image'), deleteSubCategory);
-
+subCategoryRouter.get('/:categoryId', getSubCategoriesByCategory); // Assuming you want to get subcategories by categoryId
 export default subCategoryRouter;
