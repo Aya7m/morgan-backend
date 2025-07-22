@@ -13,5 +13,5 @@ subCategoryRouter.post('/create',auth(),
 subCategoryRouter.get('/', getSubCategory);
 subCategoryRouter.put('/:id',auth(), multerLocalhost({ allowedExtensions: extention.Images }).single('image'), updateSubCategory);
 subCategoryRouter.delete('/:id',auth(), multerLocalhost({ allowedExtensions: extention.Images }).single('image'), deleteSubCategory);
-subCategoryRouter.get('/:categoryId', getSubCategoriesByCategory); // Assuming you want to get subcategories by categoryId
+subCategoryRouter.get('/by-category/:categoryId', getSubCategoriesByCategory); // Assuming you want to get subcategories by categoryId
 export default subCategoryRouter;
