@@ -130,6 +130,7 @@ export const getProducts = async (req, res) => {
             maxPrice,
             categoryName,
             subCategoryName,
+            subCategoryId,
             badges,
             ratingFrom,
             ratingTo,
@@ -174,6 +175,10 @@ export const getProducts = async (req, res) => {
             if (subCat) query.subCategory = subCat._id;
         }
 
+        if (req.query.subCategoryId) {
+            query.subCategory = req.query.subCategoryId;
+        }
+
         // فلترة بالباجز
         if (badges) {
             const badgesArray = Array.isArray(badges) ? badges : badges.split(",");
@@ -191,6 +196,8 @@ export const getProducts = async (req, res) => {
         if (createdBy) {
             query.createdBy = createdBy;
         }
+
+
 
         // Pagination + Sorting
         const sortOption = {};
