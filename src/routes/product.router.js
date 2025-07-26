@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProduct, deleteProduct,  getProducts, getRecommendedProducts, updateProduct } from "../controllers/product.controller.js";
+import { createProduct, deleteProduct,  getProductById,  getProducts, getRecommendedProducts, updateProduct } from "../controllers/product.controller.js";
 import { extention } from "../utilites/fileExtention.utilites.js";
 import { multerLocalhost } from "../middleware/multer.meddleware.js";
 import { auth, authRole } from "../middleware/auth.middleware.js";
@@ -39,6 +39,7 @@ productRouter.put('/:id',
 
 productRouter.delete('/:id',deleteProduct);
 productRouter.get("/recommended/:productId", getRecommendedProducts);
+productRouter.get("/:id",getProductById);
 
 
 
