@@ -19,16 +19,25 @@ export const addToCart = async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
+        // ✅ Normalize color
+        const normalizedColor = color.trim().toLowerCase();
+
+        // ✅ Find matching variant
         const variant = product.variants.find(
-            (v) => v.color.trim().toLowerCase() === color.trim().toLowerCase()
+            (v) => v.color && v.color.trim().toLowerCase() === normalizedColor
         );
 
-
-        const sizeData = variant.sizes.find(s => s.size === size);
-        if (!sizeData) {
-            return res.status(404).json({ message: "Size not found" });
+        if (!variant) {
+            return res.status(404).json({ message: `Color variant '${color}' not found` });
         }
 
+        // ✅ Find matching size
+        const sizeData = variant.sizes.find(s => s.size === size);
+        if (!sizeData) {
+            return res.status(404).json({ message: `Size '${size}' not found for color '${color}'` });
+        }
+
+        // ✅ Check stock
         if (sizeData.stock < quantity) {
             return res.status(400).json({ message: "Insufficient stock" });
         }
@@ -36,11 +45,13 @@ export const addToCart = async (req, res) => {
         const itemPrice = sizeData.price;
         const itemTotal = itemPrice * quantity;
 
-        // Check if user already has a cart
+        // ✅ Check for existing cart
         let cart = await Cart.findOne({ userId });
 
         const newProduct = {
             productId,
+            color,
+            size,
             quantity,
             price: itemPrice,
         };
@@ -52,7 +63,7 @@ export const addToCart = async (req, res) => {
             cart = new Cart({
                 userId,
                 products: [newProduct],
-                total: itemTotal
+                total: itemTotal,
             });
         }
 
@@ -60,7 +71,7 @@ export const addToCart = async (req, res) => {
 
         res.status(201).json({
             message: "Product added to cart successfully",
-            data: cart
+            data: cart,
         });
 
     } catch (error) {
@@ -68,6 +79,7 @@ export const addToCart = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+
 
 
 export const removeFromCart = async (req, res) => {
