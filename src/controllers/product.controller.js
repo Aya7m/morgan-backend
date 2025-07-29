@@ -363,7 +363,7 @@ export const getRecommendedProducts = async (req, res) => {
         const recommended = await Product.find({
             category: currentProduct.category,
             _id: { $ne: productId }
-        }).limit(6);
+        }).limit(3);
 
         res.status(200).json({
             message: "Recommended products fetched",
