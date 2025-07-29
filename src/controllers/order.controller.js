@@ -78,6 +78,9 @@ export const createCheckoutSession = async (req, res) => {
             stripeSessionId: session.id,
         });
 
+
+        // ✅ 2. مسح الكارت بعد إنشاء الأوردر
+        await Cart.findOneAndDelete({ userId });
         // تحديث metadata عشان نضيف orderId
         await stripe.checkout.sessions.update(session.id, {
             metadata: {
