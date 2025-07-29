@@ -56,12 +56,12 @@ const productSchema = new Schema({
             default: "percent",
         },
     },
-    rating: {
-        type: Number,
-        default: 0,
-        min: 0,
-        max: 5,
-    },
+    // rating: {
+    //     type: Number,
+    //     default: 0,
+    //     min: 0,
+    //     max: 5,
+    // },
     variants: [
         {
             color: String,
@@ -89,7 +89,10 @@ const productSchema = new Schema({
     discount: {
         amount: Number,
         type: { type: String, enum: ["percent", "fixed"] }
-    }
+    },
+    averageRating: { type: Number, default: 0 },
+    numReviews: { type: Number, default: 0 },
+
 
 
 }, {
