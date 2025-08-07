@@ -21,9 +21,8 @@ dotenv.config()
 
 db_connection();
 app.use(cors({
-  origin: '*', // Allow all origins, you can specify specific origins if needed
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
+  origin: 'http://localhost:3000', // أو ['http://localhost:3000'] لو أكتر من origin
+  credentials: true, // لو بتستخدم كوكيز أو توكنات
 }));
 
 app.use(express.json());
